@@ -1,39 +1,39 @@
 
-import { fetchImages } from "./js/pixabay-api.js";
-import { displayImages, displayToast } from "./js/render-functions.js";
-const searchForm = document.querySelector("form");
-const gallery = document.querySelector(".gallery");
-const loader = document.querySelector(".spinner")
+import iziToast from "izitoast";
+import "izitoast/dist/css/iziToast.min.css";
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
+export function displayImages(images, gallery) {
+    const markup = images.map(image => `
+        <li class="gallery-item">
+            <a class="gallery-link" href="${image.largeImageURL}">
+                <div class="full-image">
+                    <img class="gallery-image" src="${image.webformatURL}" alt="${image.tags}">
+                    <ul class="image-button">
+                        <li><p>Likes</p><p>${image.likes}</p></li>
+                        <li><p>Views</p><p>${image.views}</p></li>
+                        <li><p>Comments</p><p>${image.comments}</p></li>
+                        <li><p>Downloads</p><p>${image.downloads}</p></li>
+                    </ul>
+                </div>
+            </a>
+        </li>
+    `).join('');
+    gallery.innerHTML = markup;
 
-searchForm.addEventListener("submit", event => {
-    event.preventDefault();
-    gallery.innerHTML = "";
-    loader.classList.remove('is-hidden');
+    const lightbox = new SimpleLightbox('.gallery a', {
+        captionsData: 'alt',
+        captionDelay: 250,
+    });
+    lightbox.refresh();
+}
 
-    
+export function displayToast(message, type) {
+    iziToast[type]({
+        message,
+        messageColor: 'white',
+        position: 'topRight',
+        backgroundColor: 'red'
 
-    const searchData = event.target.elements.search_input.value.trim();
-    if (searchData === "") {
-        displayToast('All form fields must be filled in', 'warning');
-        loader.classList.add('is-hidden');
-        return;
-    }
-
-    fetchImages(searchData)
-        .then(images => {
-            if (images.total === 0) {
-                displayToast('Sorry, there are no images matching your search query. Please try again!', 'error');
-                return;
-            }
-
-            displayImages(images.hits, gallery);
-        })
-        .catch(error => {
-            console.error('Error fetching images:', error);
-            displayToast('An error occurred while fetching images. Please try again later.', 'error');
-        })
-        .finally(() => {
-            event.target.reset();
-            loader.classList.add('is-hidden');
-        });
-});
+    });
+}

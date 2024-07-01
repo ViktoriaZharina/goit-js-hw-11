@@ -1,6 +1,6 @@
 
-import { fetchImages } from "./js/pixabay-api.js";
-import { displayImages, displayToast } from "./js/render-functions.js";
+import { fetchImages } from "./js/pixabay-api";
+import { displayImages, displayToast } from "./js/render-functions";
 const searchForm = document.querySelector("form");
 const gallery = document.querySelector(".gallery");
 const loader = document.querySelector(".spinner")
